@@ -151,6 +151,7 @@ class Annotation {
     this.alpha = 1.0,
     this.anchor = const Offset(0.5, 1.0),
     this.draggable = false,
+    this.image,
     this.icon = BitmapDescriptor.defaultAnnotation,
     this.infoWindow = InfoWindow.noText,
     this.position = const LatLng(0.0, 0.0),
@@ -188,6 +189,8 @@ class Annotation {
 
   /// A description of the bitmap used to draw the annotation icon.
   final BitmapDescriptor icon;
+
+  final ImageDescriptor? image;
 
   /// An Apple Maps InfoWindow.
   ///
@@ -250,6 +253,7 @@ class Annotation {
     addIfPresent('icon', icon._toJson());
     addIfPresent('infoWindow', infoWindow._toJson());
     addIfPresent('visible', visible);
+    addIfPresent('image', image?._toJson());
     addIfPresent('position', position._toJson());
     addIfPresent('isChildAnnotation', isChildAnnotation);
     addIfPresent('backgroundColor', backgroundColor);
