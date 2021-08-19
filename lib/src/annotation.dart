@@ -145,6 +145,8 @@ class Annotation {
   /// * is visible; [visible] is true
   const Annotation({
     required this.annotationId,
+    this.isChildAnnotation = false,
+    this.clusteringIdentifier,
     this.alpha = 1.0,
     this.anchor = const Offset(0.5, 1.0),
     this.draggable = false,
@@ -156,8 +158,14 @@ class Annotation {
     this.onDragEnd,
   }) : assert(0.0 <= alpha && alpha <= 1.0);
 
+  /// Current clusteringIdentifier
+  final String? clusteringIdentifier;
+
   /// Uniquely identifies a [Annotation].
   final AnnotationId annotationId;
+
+  /// Determinates if annotation is a child of another anotation
+  final bool isChildAnnotation;
 
   /// The opacity of the annotation, between 0.0 and 1.0 inclusive.
   ///
@@ -231,6 +239,7 @@ class Annotation {
     }
 
     addIfPresent('annotationId', annotationId.value);
+    addIfPresent('clusteringIdentifier', clusteringIdentifier);
     addIfPresent('alpha', alpha);
     addIfPresent('anchor', _offsetToJson(anchor));
     addIfPresent('draggable', draggable);
@@ -238,6 +247,7 @@ class Annotation {
     addIfPresent('infoWindow', infoWindow._toJson());
     addIfPresent('visible', visible);
     addIfPresent('position', position._toJson());
+    addIfPresent('isChildAnnotation', isChildAnnotation);
     return json;
   }
 
