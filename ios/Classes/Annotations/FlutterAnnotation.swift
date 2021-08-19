@@ -13,6 +13,7 @@ class FlutterAnnotation: NSObject, MKAnnotation {
     var id :String!
     var title: String?
     var subtitle: String?
+    var backgroundColor: String?
     var isChildAnnotation: Bool
     var clusteringIdentifier: String?
     var infoWindowConsumesTapEvents: Bool = false
@@ -35,6 +36,7 @@ class FlutterAnnotation: NSObject, MKAnnotation {
         self.subtitle = infoWindow["snippet"] as? String
         self.infoWindowConsumesTapEvents = infoWindow["consumesTapEvents"] as? Bool ?? false
         self.id = annotationData["annotationId"] as? String
+        self.backgroundColor = annotationData["backgroundColor"] as? String
         self.isVisible = annotationData["visible"] as? Bool
         self.isDraggable = annotationData["draggable"] as? Bool
         self.clusteringIdentifier = annotationData["clusteringIdentifier"] as? String

@@ -145,6 +145,7 @@ class Annotation {
   /// * is visible; [visible] is true
   const Annotation({
     required this.annotationId,
+    this.backgroundColor,
     this.isChildAnnotation = false,
     this.clusteringIdentifier,
     this.alpha = 1.0,
@@ -171,6 +172,9 @@ class Annotation {
   ///
   /// 0.0 means fully transparent, 1.0 means fully opaque.
   final double alpha;
+
+  /// Backgroundcolor of the marker
+  final String? backgroundColor;
 
   /// The icon image point that will be placed at the [position] of the marker.
   ///
@@ -248,6 +252,7 @@ class Annotation {
     addIfPresent('visible', visible);
     addIfPresent('position', position._toJson());
     addIfPresent('isChildAnnotation', isChildAnnotation);
+    addIfPresent('backgroundColor', backgroundColor);
     return json;
   }
 
