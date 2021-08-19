@@ -49,9 +49,6 @@ public class AppleMapController: NSObject, FlutterPlatformView {
         if isClusteringEnabled {
             if #available(iOS 11.0, *) {
                 mapView.register(
-                    ClusterableAnnotationView.self,
-                    forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
-                mapView.register(
                     ClusterAnnotationView.self,
                     forAnnotationViewWithReuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier)
             }
@@ -317,6 +314,7 @@ public class AppleMapController: NSObject, FlutterPlatformView {
 
 extension AppleMapController: MKMapViewDelegate {
     public func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
+        print(mapView.zoomLevel)
         if(mapView.zoomLevel > 17.0 && hideChildAnnotations) {
             let annotations = mapView.annotations
             annotations.forEach { annotation in
@@ -400,6 +398,14 @@ extension AppleMapController: MKMapViewDelegate {
     
     public func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         guard !isClusteringEnabled else {
+            if let flutterAnnotation = annotation as? FlutterAnnotation {
+                if #available(iOS 11.0, *) {
+                    self.mapView.register(ClusterableAnnotationView.self, forAnnotationViewWithReuseIdentifier: flutterAnnotation.id)
+                    let view = self.mapView.dequeueReusableAnnotationView(withIdentifier: flutterAnnotation.id, for: annotation)
+                    (view as! ClusterableAnnotationView).setVisibility(zoom: mapView.zoomLevel, annotation: flutterAnnotation)
+                    return view
+                }
+            }
             return nil
         }
         if annotation is MKUserLocation {

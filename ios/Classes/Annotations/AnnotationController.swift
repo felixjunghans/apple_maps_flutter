@@ -158,9 +158,6 @@ extension AppleMapController: AnnotationDelegate {
 
     private func addAnnotation(annotationData: Dictionary<String, Any>) {
         let annotation :FlutterAnnotation = FlutterAnnotation(fromDictionary: annotationData, registrar: registrar)
-        if (self.mapView.zoomLevel > 14.0 && !annotation.isChildAnnotation || (self.mapView.zoomLevel <= 14.0 && annotation.isChildAnnotation)) {
-            annotation.isVisible = false
-        }
         self.mapView.addAnnotation(annotation)
     }
 
@@ -191,6 +188,17 @@ extension AppleMapController: AnnotationDelegate {
             annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: id)
         }
         annotationView?.image = annotation.icon.image
+        return annotationView!
+    }
+    
+    private func getClusterAnnotationView(annotation: FlutterAnnotation, id: String) -> MKAnnotationView {
+        let annotationView: MKAnnotationView?
+        if #available(iOS 11.0, *) {
+            self.mapView.register(ClusterableAnnotationView.self, forAnnotationViewWithReuseIdentifier: id)
+            annotationView = self.mapView.dequeueReusableAnnotationView(withIdentifier: id, for: annotation)
+        } else {
+            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: id)
+        }
         return annotationView!
     }
 

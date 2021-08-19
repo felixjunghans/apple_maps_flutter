@@ -80,6 +80,7 @@ class PlaceAnnotationClusteredBodyState
       clusteringIdentifier:
           _annotationIdCounter % 4 == 0 ? 'cluster_test' : null,
       isChildAnnotation: _annotationIdCounter % 4 == 0 ? false : true,
+      backgroundColor: "#121a15",
       icon: iconType == 'marker'
           ? BitmapDescriptor.markerAnnotation
           : iconType == 'pin'
@@ -88,8 +89,8 @@ class PlaceAnnotationClusteredBodyState
                   ? _iconFromBytes!
                   : _annotationIcon!,
       position: LatLng(
-        48.865849 + _annotationIdCounter * 0.0001,
-        9.31956 + _annotationIdCounter * 0.0001,
+        48.865849 + _annotationIdCounter * 0.001,
+        9.31956 + _annotationIdCounter * 0.001,
       ),
       infoWindow: InfoWindow(
           title: annotationIdVal,

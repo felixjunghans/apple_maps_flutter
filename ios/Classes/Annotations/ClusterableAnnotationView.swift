@@ -7,19 +7,31 @@
 
 import MapKit
 
+let supportedIcons : Dictionary<String, String> = [
+    "rutsche": "rutsche",
+    "schaukel": "schaukel",
+    "wippe": "wippe",
+]
+
 @available(iOS 11.0, *)
 class ClusterableAnnotationView: MKMarkerAnnotationView {
-
-    var lastAnnotation: FlutterAnnotation?
     
+    var lastAnnotation: FlutterAnnotation?
     override var annotation: MKAnnotation? {
         didSet {
             guard let mapItem = annotation as? FlutterAnnotation, mapItem != lastAnnotation else { return }
             glyphImage = mapItem.image
+            displayPriority = .required
             if(mapItem.backgroundColor != nil) {
-                backgroundColor = colorWithHexString(hexString: mapItem.backgroundColor!)
+                markerTintColor = colorWithHexString(hexString: mapItem.backgroundColor!)
             }
             clusteringIdentifier = mapItem.clusteringIdentifier
+        }
+    }
+    
+    func setVisibility(zoom: Double, annotation: FlutterAnnotation) {
+        if((annotation.isChildAnnotation && zoom <= 17.0) || (annotation.isChildAnnotation && zoom > 17.0)) {
+            isHidden = true
         }
     }
 }
@@ -29,6 +41,8 @@ final class ClusterAnnotationView: MKMarkerAnnotationView {
     override var annotation: MKAnnotation? {
         didSet {
             guard let cluster = annotation as? MKClusterAnnotation, let firstAnnotation = cluster.memberAnnotations.first as? FlutterAnnotation else { return }
+            titleVisibility = .hidden
+            subtitleVisibility = .hidden
         }
     }
     
@@ -46,7 +60,7 @@ private func drawMarker() -> UIImage {
             // Fill full circle with wholeColor
             UIColor.systemGreen.setFill()
             UIBezierPath(roundedRect: CGRect(x: 0, y: 0, width: size, height: size), cornerRadius: 10).fill()
-
+            
             let heightWidth = 60
             let path = UIBezierPath()
             
@@ -56,7 +70,7 @@ private func drawMarker() -> UIImage {
             path.addLine(to: CGPoint(x:size / 2 - 10, y: size))
             path.close()
             path.fill()
-
+            
             // Finally draw count text vertically and horizontally centered
             let attributes = [ NSAttributedString.Key.foregroundColor: UIColor.black,
                                NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20)]
@@ -75,13 +89,13 @@ private func drawMarker() -> UIImage {
 func colorWithHexString(hexString: String) -> UIColor {
     var colorString = hexString.trimmingCharacters(in: .whitespacesAndNewlines)
     colorString = colorString.replacingOccurrences(of: "#", with: "").uppercased()
-
+    
     print(colorString)
     let alpha: CGFloat = 1.0
     let red: CGFloat = colorComponentFrom(colorString: colorString, start: 0, length: 2)
     let green: CGFloat = colorComponentFrom(colorString: colorString, start: 2, length: 2)
     let blue: CGFloat = colorComponentFrom(colorString: colorString, start: 4, length: 2)
-
+    
     let color = UIColor(red: red, green: green, blue: blue, alpha: alpha)
     return color
 }
@@ -92,7 +106,7 @@ func colorComponentFrom(colorString: String, start: Int, length: Int) -> CGFloat
     let subString = colorString[startIndex..<endIndex]
     let fullHexString = length == 2 ? subString : "\(subString)\(subString)"
     var hexComponent: UInt32 = 0
-
+    
     guard Scanner(string: String(fullHexString)).scanHexInt32(&hexComponent) else {
         return 0
     }

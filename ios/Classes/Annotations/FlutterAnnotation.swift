@@ -45,6 +45,10 @@ class FlutterAnnotation: NSObject, MKAnnotation {
             self.alpha = alpha
         }
         
+        if let imageJSON: Array<Any> = annotationData["image"] as? Array<Any> {
+            self.image = FlutterAnnotation.getImage(imageData: imageJSON)
+        }
+        
         if let anchorJSON: Array<Double> = annotationData["anchor"] as? Array<Double> {
             self.anchor = Offset(from: anchorJSON)
         }
@@ -56,6 +60,27 @@ class FlutterAnnotation: NSObject, MKAnnotation {
         if let calloutOffsetJSON = infoWindow["anchor"] as? Array<Double> {
             self.calloutOffset = Offset(from: calloutOffsetJSON)
         }
+    }
+    
+    enum ImageType {
+        case ASSETS, CUSTOM_FROM_BYTES
+    }
+    
+    static private func getImage(imageData: Array<Any>) -> UIImage? {
+        let imageTypeMap: Dictionary<String, ImageType> = ["fromAssetImage": .ASSETS, "fromBytes": .CUSTOM_FROM_BYTES]
+        var image: UIImage?
+        let imageType: ImageType = imageTypeMap[imageData[0] as! String] ?? .CUSTOM_FROM_BYTES
+        
+        if imageType == .ASSETS {
+            if let data = imageData[1] as? String {
+                image = UIImage(named: data)
+            }
+        } else if imageType == .CUSTOM_FROM_BYTES {
+            if let data = imageData[1] as? FlutterStandardTypedData {
+                image = UIImage(data: data.data)
+            }
+        }
+        return image
     }
     
     static private func getAnnotationIcon(iconData: Array<Any>, registrar: FlutterPluginRegistrar, annotationId: String) -> AnnotationIcon {
