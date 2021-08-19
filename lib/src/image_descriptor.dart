@@ -12,7 +12,7 @@ class ImageDescriptor {
   /// https://flutter.dev/docs/development/ui/assets-and-images#declaring-resolution-aware-image-assets
   /// This method takes into consideration various asset resolutions
   /// and scales the images to the right resolution depending on the dpi.
-  static Future<ImageDescriptor> fromAssetImage(String assetName) async {
+  factory ImageDescriptor.fromAssetImage(String assetName) {
     return ImageDescriptor._(<dynamic>[
       'fromAssetImage',
       assetName,
@@ -21,7 +21,7 @@ class ImageDescriptor {
 
   /// Creates a ImageDescriptor using an array of bytes that must be encoded
   /// as PNG.
-  static ImageDescriptor fromBytes(Uint8List byteData) {
+  factory ImageDescriptor.fromBytes(Uint8List byteData) {
     return ImageDescriptor._(<dynamic>['fromBytes', byteData]);
   }
 
