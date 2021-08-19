@@ -157,7 +157,10 @@ extension AppleMapController: AnnotationDelegate {
     }
 
     private func addAnnotation(annotationData: Dictionary<String, Any>) {
-        let annotation :MKAnnotation = FlutterAnnotation(fromDictionary: annotationData, registrar: registrar)
+        let annotation :FlutterAnnotation = FlutterAnnotation(fromDictionary: annotationData, registrar: registrar)
+        if (self.mapView.zoomLevel > 14.0 && !annotation.isChildAnnotation || (self.mapView.zoomLevel <= 14.0 && annotation.isChildAnnotation)) {
+            annotation.isVisible = false
+        }
         self.mapView.addAnnotation(annotation)
     }
 
