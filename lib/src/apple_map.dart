@@ -39,6 +39,7 @@ class AppleMap extends StatefulWidget {
     this.onCameraMoveStarted,
     this.onCameraMove,
     this.onCameraIdle,
+    this.onAnnotationUpdated,
     this.onTap,
     this.onLongPress,
     this.enableClustering = false,
@@ -157,6 +158,9 @@ class AppleMap extends StatefulWidget {
   /// were not claimed by any other gesture recognizer.
   final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
 
+  /// Called as soon as annotation data was updated.
+  final VoidCallback? onAnnotationUpdated;
+
   /// The padding used on the map
   ///
   /// The amount of additional space (measured in screen points) used for padding for the
@@ -220,7 +224,7 @@ class _AppleMapState extends State<AppleMap> {
   void didUpdateWidget(AppleMap oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateOptions();
-    // _updateAnnotations();
+    _updateAnnotations();
     _updatePolylines();
     _updatePolygons();
     _updateCircles();
@@ -240,9 +244,10 @@ class _AppleMapState extends State<AppleMap> {
 
   void _updateAnnotations() async {
     final AppleMapController controller = await _controller.future;
-    controller._updateAnnotations(_AnnotationUpdates.from(
+    await controller._updateAnnotations(_AnnotationUpdates.from(
         _annotations.values.toSet(), widget.annotations));
     _annotations = _keyByAnnotationId(widget.annotations);
+    widget.onAnnotationUpdated?.call();
   }
 
   void _updatePolylines() async {

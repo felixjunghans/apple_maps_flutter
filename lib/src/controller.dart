@@ -98,12 +98,6 @@ class AppleMapController {
     );
   }
 
-  Future<void> updateAnnotations(Set<Annotation> annotations) async {
-    await _updateAnnotations(_AnnotationUpdates.from(
-        _appleMapState._annotations.values.toSet(), annotations));
-    _appleMapState._annotations = _keyByAnnotationId(annotations);
-  }
-
   /// Updates annotation configuration.
   ///
   /// Change listeners are notified once the update has been made on the
