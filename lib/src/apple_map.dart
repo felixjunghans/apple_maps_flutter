@@ -220,7 +220,7 @@ class _AppleMapState extends State<AppleMap> {
   void didUpdateWidget(AppleMap oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateOptions();
-    _updateAnnotations();
+    // _updateAnnotations();
     _updatePolylines();
     _updatePolygons();
     _updateCircles();

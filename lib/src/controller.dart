@@ -14,6 +14,8 @@ class AppleMapController {
     channel.setMethodCallHandler(_handleMethodCall);
   }
 
+  Map<AnnotationId, Annotation> _annotations = <AnnotationId, Annotation>{};
+
   static Future<AppleMapController> init(
     int id,
     CameraPosition initialCameraPosition,
@@ -96,6 +98,12 @@ class AppleMapController {
         'options': optionsUpdate,
       },
     );
+  }
+
+  Future<void> updateAnnotations(Set<Annotation> annotations) async {
+    await _updateAnnotations(
+        _AnnotationUpdates.from(_annotations.values.toSet(), annotations));
+    _annotations = _keyByAnnotationId(annotations);
   }
 
   /// Updates annotation configuration.
