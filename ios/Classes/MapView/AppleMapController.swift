@@ -175,12 +175,28 @@ public class AppleMapController: NSObject, FlutterPlatformView {
                 case "camera#getZoomLevel":
                     result(self.mapView.calculatedZoomLevel)
                     break
+                case "showAnnotations":
+                    self.showAnnotations()
+                    result(nil)
+                    break
                 default:
                     result(FlutterMethodNotImplemented)
                     break
                 }
             }
         })
+    }
+    
+    private func showAnnotations() -> Void {
+        let annotations = mapView.annotations.filter { annotation in
+            if let flutterAnnotation = annotation as? FlutterAnnotation {
+                if((flutterAnnotation.isChildAnnotation && mapView.zoomLevel > 17.0) || (!flutterAnnotation.isChildAnnotation && mapView.zoomLevel <= 17.0)) {
+                    return true
+                }
+            }
+            return false
+        }
+        mapView.showAnnotations(annotations, animated: true)
     }
     
     private func annotationUpdate(args: Dictionary<String, Any>) -> Void {

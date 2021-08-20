@@ -78,6 +78,11 @@ class AppleMapController {
     }
   }
 
+  /// Zoom to current Annotations inside the map.
+  Future<void> showAnnotations() async {
+    await channel.invokeMethod<void>('showAnnotations');
+  }
+
   /// Updates configuration options of the map user interface.
   ///
   /// Change listeners are notified once the update has been made on the
