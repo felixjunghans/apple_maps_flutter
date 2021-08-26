@@ -243,10 +243,12 @@ class _AppleMapState extends State<AppleMap> {
   }
 
   void _updateAnnotations() async {
+    // TODO Add annotation Queue to avoid wrong order of two fast updates
     final AppleMapController controller = await _controller.future;
-    await controller._updateAnnotations(_AnnotationUpdates.from(
-        _annotations.values.toSet(), widget.annotations));
+    final _currentAnnotations = _annotations;
     _annotations = _keyByAnnotationId(widget.annotations);
+    await controller._updateAnnotations(_AnnotationUpdates.from(
+        _currentAnnotations.values.toSet(), widget.annotations));
     widget.onAnnotationUpdated?.call();
   }
 
