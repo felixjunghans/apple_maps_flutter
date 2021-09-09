@@ -38,6 +38,11 @@ class FlutterMapView: MKMapView, UIGestureRecognizerDelegate {
         self.init(frame: CGRect.zero)
         self.channel = channel
         self.options = options
+        if #available(iOS 13.0, *) {
+            pointOfInterestFilter = MKPointOfInterestFilter.excludingAll
+        } else {
+            showsPointsOfInterest = false
+        }
         initialiseTapGestureRecognizers()
     }
     
