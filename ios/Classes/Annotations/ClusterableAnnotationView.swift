@@ -21,6 +21,7 @@ class ClusterableAnnotationView: MKMarkerAnnotationView {
         didSet {
             guard let mapItem = annotation as? FlutterAnnotation, mapItem != lastAnnotation else { return }
             glyphImage = mapItem.image
+            isEnabled = false
             displayPriority = .required
             if(mapItem.backgroundColor != nil) {
                 markerTintColor = colorWithHexString(hexString: mapItem.backgroundColor!)

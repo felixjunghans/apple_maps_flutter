@@ -20,6 +20,7 @@ class FlutterMapView: MKMapView, UIGestureRecognizerDelegate {
     var oldBounds: CGRect?
     var options: Dictionary<String, Any>?
     var isMyLocationButtonShowing: Bool? = false
+    var isAnnotion: Bool = false
     fileprivate let locationManager: CLLocationManager = CLLocationManager()
     
     let mapTypes: Array<MKMapType> = [
@@ -39,6 +40,7 @@ class FlutterMapView: MKMapView, UIGestureRecognizerDelegate {
         self.channel = channel
         self.options = options
         if #available(iOS 13.0, *) {
+            self.overrideUserInterfaceStyle = .light
             pointOfInterestFilter = MKPointOfInterestFilter.excludingAll
         } else {
             showsPointsOfInterest = false
@@ -117,12 +119,21 @@ class FlutterMapView: MKMapView, UIGestureRecognizerDelegate {
     
     func interpretOptions(options: Dictionary<String, Any>) {
         if let isCompassEnabled: Bool = options["compassEnabled"] as? Bool {
-            if #available(iOS 9.0, *) {
-                self.showsCompass = isCompassEnabled
+            if #available(iOS 13.0, *) {
+                self.showsCompass = false
+                
+                let window = UIApplication.shared.windows.first
+                let topPadding = window?.safeAreaInsets.top ?? 0.0
+
+                if(isCompassEnabled) {
+                    let compassBtn = MKCompassButton(mapView: self)
+                    compassBtn.frame.origin = CGPoint(x: 16, y: topPadding + 20)
+                    compassBtn.compassVisibility = .adaptive
+                    self.addSubview(compassBtn)
+                }
                 self.mapTrackingButton(isVisible: self.isMyLocationButtonShowing ?? false)
             }
         }
-
         if let padding: Array<Any> = options["padding"] as? Array<Any> {
             var margins = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
             
@@ -318,7 +329,7 @@ class FlutterMapView: MKMapView, UIGestureRecognizerDelegate {
     }
 
     @objc func onTap(tap: UITapGestureRecognizer) {
-        if tap.state == .recognized {
+        if tap.state == .recognized && !isAnnotion {
             TouchHandler.handleMapTaps(tap: tap, overlays: self.overlays, channel: self.channel, in: self)
         }
     }
@@ -327,6 +338,17 @@ class FlutterMapView: MKMapView, UIGestureRecognizerDelegate {
         if oldBounds != nil && oldBounds != CGRect.zero {
             self.updateStoredCameraValues(newZoomLevel: calculatedZoomLevel, newPitch: camera.pitch, newHeading: actualHeading)
         }
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if #available(iOS 13, *) {
+        var tv = touch.view
+        while let view = tv, !(view is MKAnnotationView || view is MKCompassButton) {
+            tv = view.superview
+        }
+        isAnnotion = tv != nil
+        }
+        return true
     }
     
     // Always allow multiple gestureRecognizers
