@@ -330,7 +330,6 @@ public class AppleMapController: NSObject, FlutterPlatformView {
 
 extension AppleMapController: MKMapViewDelegate {
     public func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
-        print(mapView.zoomLevel)
         if(mapView.zoomLevel > 17.0 && hideChildAnnotations) {
             let annotations = mapView.annotations
             annotations.forEach { annotation in
@@ -338,7 +337,7 @@ extension AppleMapController: MKMapViewDelegate {
                     if((annotation as? FlutterAnnotation)?.isChildAnnotation ?? false) {
                         mapView.view(for: annotation)?.isHidden = false
                     } else {
-                        mapView.view(for: annotation)?.isHidden = true
+                        mapView.view(for: annotation)?.isHidden = false
                     }
                 } else {
                     // Fallback on earlier versions
