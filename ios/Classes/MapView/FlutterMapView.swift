@@ -249,17 +249,17 @@ class FlutterMapView: MKMapView, UIGestureRecognizerDelegate {
             let buttonContainer = UIView()
             if #available(iOS 9.0, *) {
                 buttonContainer.translatesAutoresizingMaskIntoConstraints = false
-                buttonContainer.widthAnchor.constraint(equalToConstant: 35).isActive = true
-                buttonContainer.heightAnchor.constraint(equalToConstant: 35).isActive = true
-                buttonContainer.layer.cornerRadius = 8
+                buttonContainer.widthAnchor.constraint(equalToConstant: 40).isActive = true
+                buttonContainer.heightAnchor.constraint(equalToConstant: 40).isActive = true
+                buttonContainer.layer.cornerRadius = 20
                 buttonContainer.tag = BUTTON_IDS.LOCATION.rawValue
-                buttonContainer.backgroundColor = .white
                 if #available(iOS 11.0, *) {
                     let userTrackingButton = MKUserTrackingButton(mapView: self)
                     userTrackingButton.translatesAutoresizingMaskIntoConstraints = false
                     buttonContainer.addSubview(userTrackingButton)
                     userTrackingButton.centerXAnchor.constraint(equalTo: buttonContainer.centerXAnchor).isActive = true
                     userTrackingButton.centerYAnchor.constraint(equalTo: buttonContainer.centerYAnchor).isActive = true
+
                 } else {
                     let locationButton = UIButton(type: UIButton.ButtonType.custom) as UIButton
                     let image = UIImage(named: "outline_near_me")
@@ -271,9 +271,18 @@ class FlutterMapView: MKMapView, UIGestureRecognizerDelegate {
                     locationButton.centerXAnchor.constraint(equalTo: buttonContainer.centerXAnchor).isActive = true
                     locationButton.centerYAnchor.constraint(equalTo: buttonContainer.centerYAnchor).isActive = true
                 }
+                buttonContainer.backgroundColor = .white
+                if #available(iOS 13.0, *) {
+                    buttonContainer.layer.shadowColor = UIColor.tertiaryLabel.cgColor
+                } else {
+                    buttonContainer.layer.shadowColor = UIColor.black.cgColor
+                }
+                buttonContainer.layer.shadowOpacity = 1
+                buttonContainer.layer.shadowOffset = .zero
+                buttonContainer.layer.shadowRadius = 1
                 self.addSubview(buttonContainer)
-                buttonContainer.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -5 - self.layoutMargins.right).isActive = true
-                buttonContainer.topAnchor.constraint(equalTo: self.topAnchor, constant: self.showsCompass ? 50 : 5 + self.layoutMargins.top).isActive = true
+                buttonContainer.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16 - self.layoutMargins.right).isActive = true
+                buttonContainer.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -24 - self.layoutMargins.bottom).isActive = true
             }
         }
     }
