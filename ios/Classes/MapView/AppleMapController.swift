@@ -190,7 +190,7 @@ public class AppleMapController: NSObject, FlutterPlatformView {
     private func showAnnotations() -> Void {
         let annotations = mapView.annotations.filter { annotation in
             if let flutterAnnotation = annotation as? FlutterAnnotation {
-                if((flutterAnnotation.isChildAnnotation && mapView.zoomLevel > 17.0) || (!flutterAnnotation.isChildAnnotation && mapView.zoomLevel <= 17.0)) {
+                if((flutterAnnotation.isChildAnnotation && mapView.zoomLevel > 19.0) || (!flutterAnnotation.isChildAnnotation && mapView.zoomLevel <= 19.0)) {
                     return true
                 }
             }
@@ -330,21 +330,21 @@ public class AppleMapController: NSObject, FlutterPlatformView {
 
 extension AppleMapController: MKMapViewDelegate {
     public func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
-        if(mapView.zoomLevel > 17.0 && hideChildAnnotations) {
+        if(mapView.zoomLevel > 19.0 && hideChildAnnotations) {
             let annotations = mapView.annotations
             annotations.forEach { annotation in
                 if #available(iOS 11.0, *) {
                     if((annotation as? FlutterAnnotation)?.isChildAnnotation ?? false) {
                         mapView.view(for: annotation)?.isHidden = false
                     } else {
-                        mapView.view(for: annotation)?.isHidden = false
+                        mapView.view(for: annotation)?.isHidden = true
                     }
                 } else {
                     // Fallback on earlier versions
                 }
             }
             hideChildAnnotations = false;
-        } else if (mapView.zoomLevel <= 17.0 && !hideChildAnnotations) {
+        } else if (mapView.zoomLevel <= 19.0 && !hideChildAnnotations) {
             let annotations = mapView.annotations
             annotations.forEach { annotation in
                 if #available(iOS 11.0, *) {
