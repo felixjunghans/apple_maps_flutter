@@ -27,7 +27,7 @@ class FlutterMapView: MKMapView, UIGestureRecognizerDelegate {
         MKMapType.standard,
         MKMapType.satellite,
         MKMapType.hybrid,
-        MKMapType.satelliteFlyover
+        MKMapType.satelliteFlyover,
         MKMapType.hybridFlyover,
     ]
     
