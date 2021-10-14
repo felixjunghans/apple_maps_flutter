@@ -190,7 +190,7 @@ extension AppleMapController: AnnotationDelegate {
             annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: id)
         }
         annotationView?.image = UIImage(named: "point_marker")
-        annotationView?.frame.size = CGSize(width: 10, height: 10)
+        annotationView?.frame.size = CGSize(width: 15, height: 15)
         return annotationView!
     }
 
