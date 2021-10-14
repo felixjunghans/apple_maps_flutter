@@ -27,6 +27,8 @@ class FlutterMapView: MKMapView, UIGestureRecognizerDelegate {
         MKMapType.standard,
         MKMapType.satellite,
         MKMapType.hybrid,
+        MKMapType.satelliteFlyover
+        MKMapType.hybridFlyover,
     ]
     
     let userTrackingModes: Array<MKUserTrackingMode> = [
@@ -117,7 +119,7 @@ class FlutterMapView: MKMapView, UIGestureRecognizerDelegate {
       }
     }
     
-    func interpretOptions(options: Dictionary<String, Any>) {
+    func mapTypeinterpretOptions(options: Dictionary<String, Any>) {
         if let isCompassEnabled: Bool = options["compassEnabled"] as? Bool {
             if #available(iOS 13.0, *) {
                 self.showsCompass = false
