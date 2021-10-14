@@ -143,6 +143,10 @@ public class AppleMapController: NSObject, FlutterPlatformView {
                 case "map#getVisibleRegion":
                     result(self.mapView.getVisibleRegion())
                     break
+                case "map#getCenter":
+                    let coordinate = self.mapView.centerCoordinate
+                    result(["latitude": coordinate.latitude, "longitude": longitude])
+                    break
                 case "map#isCompassEnabled":
                     if #available(iOS 9.0, *) {
                         result(self.mapView.showsCompass)

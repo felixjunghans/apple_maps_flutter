@@ -214,6 +214,14 @@ class AppleMapController {
     return channel.invokeMethod<double>('camera#getZoomLevel');
   }
 
+  /// Return [LatLng] defining the region that is visible in a map.
+  Future<LatLng> getCenter() async {
+    final Map<String, dynamic>? latlng =
+        await channel.invokeMapMethod<String, dynamic>('map#getCenter');
+
+    return LatLng(latlng?['latitude'], latlng?['longitude']);
+  }
+
   /// Return [LatLngBounds] defining the region that is visible in a map.
   Future<LatLngBounds> getVisibleRegion() async {
     final Map<String, dynamic>? latLngBounds =
