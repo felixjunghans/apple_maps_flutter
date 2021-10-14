@@ -30,9 +30,10 @@ class ClusterableAnnotationView: MKMarkerAnnotationView {
     }
     
     func setVisibility(zoom: Double, annotation: FlutterAnnotation) {
-        if((annotation.isChildAnnotation && zoom <= 19.0)) {
-            isHidden = true
-        }
+     //   if((annotation.isChildAnnotation && zoom <= 19.0)) {
+     //       isHidden = true
+     //   }
+        isHidden = true
     }
 }
 
