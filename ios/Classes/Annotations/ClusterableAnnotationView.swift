@@ -33,7 +33,7 @@ class ClusterableAnnotationView: MKMarkerAnnotationView {
      //   if((annotation.isChildAnnotation && zoom <= 19.0)) {
      //       isHidden = true
      //   }
-        isHidden = true
+        isHidden = false
     }
 }
 
