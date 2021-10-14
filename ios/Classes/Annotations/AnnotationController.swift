@@ -21,6 +21,8 @@ extension AppleMapController: AnnotationDelegate {
                 annotationView = getMarkerAnnotationView(annotation: annotation, id: identifier)
             } else if annotation.icon.iconType == .CUSTOM_FROM_ASSET || annotation.icon.iconType == .CUSTOM_FROM_BYTES {
                 annotationView = getCustomAnnotationView(annotation: annotation, id: identifier)
+            } else if annotation.icon.iconType == .POINT {
+                annotationView = getPointAnnotationView(annotation: annotation, id: identifier)
             }
         }
         guard annotationView != nil else {
@@ -177,6 +179,18 @@ extension AppleMapController: AnnotationDelegate {
         } else {
             return MKPinAnnotationView.init(annotation: annotation, reuseIdentifier: id)
         }
+    }
+    
+    private func getPointAnnotationView(annotation: FlutterAnnotation, id: String) -> MKAnnotationView {
+        let annotationView: MKAnnotationView?
+        if #available(iOS 11.0, *) {
+            self.mapView.register(MKAnnotationView.self, forAnnotationViewWithReuseIdentifier: id)
+            annotationView = self.mapView.dequeueReusableAnnotationView(withIdentifier: id, for: annotation)
+        } else {
+            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: id)
+        }
+        annotationView?.image = UIImage(named: "point_marker")
+        return annotationView!
     }
 
     private func getCustomAnnotationView(annotation: FlutterAnnotation, id: String) -> MKAnnotationView {

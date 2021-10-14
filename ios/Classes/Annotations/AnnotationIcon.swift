@@ -8,7 +8,7 @@
 import Foundation
 
 enum IconType {
-    case PIN, MARKER, CUSTOM_FROM_ASSET, CUSTOM_FROM_BYTES
+    case PIN, MARKER, CUSTOM_FROM_ASSET, CUSTOM_FROM_BYTES, POINT
 }
 
 class AnnotationIcon: Equatable {

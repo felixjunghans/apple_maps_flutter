@@ -38,6 +38,9 @@ class BitmapDescriptor {
     return BitmapDescriptor._(<dynamic>['defaultAnnotation', color.index]);
   }
 
+  static const BitmapDescriptor pointAnnotation =
+      BitmapDescriptor._(<dynamic>['pointAnnotation']);
+
   /// Creates a [BitmapDescriptor] from an asset image.
   ///
   /// Asset images in flutter are stored per:
