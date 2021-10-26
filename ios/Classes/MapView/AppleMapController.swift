@@ -523,7 +523,7 @@ extension AppleMapController {
                 width: annotationView.bounds.width,
                 height: annotationView.bounds.height),
                                          afterScreenUpdates: true)
-            guard let mapItem = annotation as? FlutterAnnotation, mapItem != lastAnnotation else { return }
+            guard let mapItem = annotation as? FlutterAnnotation else { return }
             annotationView.glyphImage = mapItem.image
             if(mapItem.backgroundColor != nil) {
                 annotationView.markerTintColor = colorWithHexString(hexString: mapItem.backgroundColor!)
