@@ -459,7 +459,8 @@ extension AppleMapController {
         if #available(iOS 13.0, *) {
             snapShotOptions.pointOfInterestFilter = self.mapView.pointOfInterestFilter
         }
-        snapShotOptions.size = CGSize(width: UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width - 16 : UIScreen.main.bounds.height - 16, height: UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width - 16 : UIScreen.main.bounds.height - 16)
+        let padding = 32.0 * UIScreen.main.scale
+        snapShotOptions.size = CGSize(width: UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width - padding : UIScreen.main.bounds.height - padding, height: UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width - padding : UIScreen.main.bounds.height - padding)
         snapShotOptions.scale = UIScreen.main.scale
         
         let snapshotter = MKMapSnapshotter(options: snapShotOptions)
@@ -507,7 +508,7 @@ extension AppleMapController {
         paragraphStyle.alignment = .center
         let titleFont = UIFont.systemFont(ofSize: 10, weight: UIFont.Weight.semibold)
         let attrs = [NSAttributedString.Key.font: titleFont,
-                     NSAttributedString.Key.paragraphStyle: paragraphStyle]
+                     NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.backgroundColor: UIColor.white]
         return attrs
     }
     
@@ -522,6 +523,11 @@ extension AppleMapController {
                 width: annotationView.bounds.width,
                 height: annotationView.bounds.height),
                                          afterScreenUpdates: true)
+            guard let mapItem = annotation as? FlutterAnnotation, mapItem != lastAnnotation else { return }
+            annotationView.glyphImage = mapItem.image
+            if(mapItem.backgroundColor != nil) {
+                annotationView.markerTintColor = colorWithHexString(hexString: mapItem.backgroundColor!)
+            }
         }
     }
 }
