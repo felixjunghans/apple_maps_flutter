@@ -523,9 +523,9 @@ extension AppleMapController {
                 width: annotationView.bounds.width,
                 height: annotationView.bounds.height),
                                          afterScreenUpdates: true)
-            annotationView.glyphImage = mapItem.image
+            annotationView.glyphImage = annotation.image
             if(mapItem.backgroundColor != nil) {
-                annotationView.markerTintColor = colorWithHexString(hexString: mapItem.backgroundColor!)
+                annotationView.markerTintColor = colorWithHexString(hexString: annotation.backgroundColor!)
             }
         }
     }
