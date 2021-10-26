@@ -456,12 +456,14 @@ extension AppleMapController {
     private func takeSnapshot(onCompletion: @escaping (FlutterStandardTypedData?, Error?) -> Void) {
         snapShotOptions.region = self.mapView.region
         snapShotOptions.mapType = self.mapView.mapType
-        snapShotOptions.pointOfInterestFilter = self.mapView.pointOfInterestFilter
+        if #available(iOS 13.0, *) {
+            snapShotOptions.pointOfInterestFilter = self.mapView.pointOfInterestFilter
+        }
         snapShotOptions.size = CGSize(width: UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width - 16 : UIScreen.main.bounds.height - 16, height: UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width - 16 : UIScreen.main.bounds.height - 16)
         snapShotOptions.scale = UIScreen.main.scale
         
         let snapshotter = MKMapSnapshotter(options: snapShotOptions)
-        snapshotter.start { [weak self] (snapshot: MKMapSnapshot?, error: Error?) -> Void in
+        snapshotter.start { [weak self] (snapshot: MKMapSnapshotter.Snapshot?, error: Error?) -> Void in
             guard error == nil, let snapshot = snapshot else { return }
             
             UIGraphicsBeginImageContextWithOptions(snapshot.image.size, true, snapshot.image.scale)
@@ -470,9 +472,7 @@ extension AppleMapController {
             let titleAttributes = self?.titleAttributes()
             for annotation in (self?.mapView.annotations)! {
                 let point: CGPoint = snapshot.point(for: annotation.coordinate)
-                if let customPin = customPin {
-                    self?.drawPin(point: point, annotation: annotation)
-                }
+                self?.drawPin(point: point, annotation: annotation)
                 if let title = annotation.title as? String {
                     self?.drawTitle(title: title,
                                     at: point,
@@ -481,7 +481,7 @@ extension AppleMapController {
             }
             let compositeImage = UIGraphicsGetImageFromCurrentImageContext()
             if let imageData = compositeImage {
-                onCompletion(FlutterStandardTypedData.init(bytes: imageData), nil)
+                onCompletion(FlutterStandardTypedData.init(bytes: imageData.pngData()), nil)
             } else {
                 onCompletion(nil, error)
             }
@@ -490,7 +490,7 @@ extension AppleMapController {
     
     private func drawTitle(title: String,
                            at point: CGPoint,
-                           attributes: [NSAttributedStringKey: NSObject]) {
+                           attributes: [NSAttributedString.Key: NSObject]) {
         let titleSize = title.size(withAttributes: attributes)
         title.draw(with: CGRect(
                     x: point.x - titleSize.width / 2.0,
@@ -502,24 +502,26 @@ extension AppleMapController {
                    context: nil)
     }
     
-    private func titleAttributes() -> [NSAttributedStringKey: NSObject] {
+    private func titleAttributes() -> [NSAttributedString.Key: NSObject] {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         let titleFont = UIFont.systemFont(ofSize: 10, weight: UIFont.Weight.semibold)
-        let attrs = [NSAttributedStringKey.font: titleFont,
-                     NSAttributedStringKey.paragraphStyle: paragraphStyle]
+        let attrs = [NSAttributedString.Key.font: titleFont,
+                     NSAttributedString.Key.paragraphStyle: paragraphStyle]
         return attrs
     }
     
     private func drawPin(point: CGPoint, annotation: MKAnnotation) {
-        let annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: "test")
-        annotationView.contentMode = .scaleAspectFit
-        annotationView.bounds = CGRect(x: 0, y: 0, width: 40, height: 40)
-        annotationView.drawHierarchy(in: CGRect(
-            x: point.x - annotationView.bounds.size.width / 2.0,
-            y: point.y - annotationView.bounds.size.height,
-            width: annotationView.bounds.width,
-            height: annotationView.bounds.height),
-                                     afterScreenUpdates: true)
+        if #available(iOS 11.0, *) {
+            let annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: "test")
+            annotationView.contentMode = .scaleAspectFit
+            annotationView.bounds = CGRect(x: 0, y: 0, width: 40, height: 40)
+            annotationView.drawHierarchy(in: CGRect(
+                x: point.x - annotationView.bounds.size.width / 2.0,
+                y: point.y - annotationView.bounds.size.height,
+                width: annotationView.bounds.width,
+                height: annotationView.bounds.height),
+                                         afterScreenUpdates: true)
+        }
     }
 }
