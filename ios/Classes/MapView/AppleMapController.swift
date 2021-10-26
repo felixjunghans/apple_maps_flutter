@@ -506,7 +506,7 @@ extension AppleMapController {
     private func titleAttributes() -> [NSAttributedString.Key: NSObject] {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
-        let titleFont = UIFont.systemFont(ofSize: 10, weight: UIFont.Weight.semibold)
+        let titleFont = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.bold)
         let attrs = [NSAttributedString.Key.font: titleFont,
                      NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: UIColor.white]
         return attrs
@@ -517,16 +517,17 @@ extension AppleMapController {
             let annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: "test")
             annotationView.contentMode = .scaleAspectFit
             annotationView.bounds = CGRect(x: 0, y: 0, width: 40, height: 40)
+            annotationView.glyphImage = annotation.image
+            if(annotation.backgroundColor != nil) {
+                annotationView.markerTintColor = colorWithHexString(hexString: annotation.backgroundColor!)
+            }
             annotationView.drawHierarchy(in: CGRect(
                 x: point.x - annotationView.bounds.size.width / 2.0,
                 y: point.y - annotationView.bounds.size.height,
                 width: annotationView.bounds.width,
                 height: annotationView.bounds.height),
                                          afterScreenUpdates: true)
-            annotationView.glyphImage = annotation.image
-            if(annotation.backgroundColor != nil) {
-                annotationView.markerTintColor = colorWithHexString(hexString: annotation.backgroundColor!)
-            }
+       
         }
     }
 }
