@@ -194,9 +194,9 @@ public class AppleMapController: NSObject, FlutterPlatformView {
     private func showAnnotations() -> Void {
         let annotations = mapView.annotations.filter { annotation in
             if let flutterAnnotation = annotation as? FlutterAnnotation {
-               // if((flutterAnnotation.isChildAnnotation && mapView.zoomLevel > 19.0) || (!flutterAnnotation.isChildAnnotation && mapView.zoomLevel <= 19.0)) {
-               //     return true
-               // }
+                // if((flutterAnnotation.isChildAnnotation && mapView.zoomLevel > 19.0) || (!flutterAnnotation.isChildAnnotation && mapView.zoomLevel <= 19.0)) {
+                //     return true
+                // }
                 if(flutterAnnotation.isChildAnnotation) {
                     return false;
                 } else {
@@ -339,36 +339,36 @@ public class AppleMapController: NSObject, FlutterPlatformView {
 
 extension AppleMapController: MKMapViewDelegate {
     public func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
-     //   if(mapView.zoomLevel > 19.0 && hideChildAnnotations) {
-     //       let annotations = mapView.annotations
-     //       annotations.forEach { annotation in
-     //           if #available(iOS 11.0, *) {
-     //               if((annotation as? FlutterAnnotation)?.isChildAnnotation ?? false) {
-     //                   mapView.view(for: annotation)?.isHidden = false
-     //               } else {
-     //                   mapView.view(for: annotation)?.isHidden = true
-     //               }
-     //           } else {
-     //               // Fallback on earlier versions
-     //           }
-     //       }
-     //       hideChildAnnotations = false;
-     //   } else if (mapView.zoomLevel <= 19.0 && !hideChildAnnotations) {
-     //       let annotations = mapView.annotations
-     //       annotations.forEach { annotation in
-     //           if #available(iOS 11.0, *) {
-     //               if((annotation as? FlutterAnnotation)?.isChildAnnotation ?? false) {
-     //                   mapView.view(for: annotation)?.isHidden = true
-     //               } else {
-     //                   mapView.view(for: annotation)?.isHidden = false
-     //               }
-     //           } else {
-     //               // Fallback on earlier versions
-     //           }
-     //       }
-     //       hideChildAnnotations = true;
-     //   }
-     //
+        //   if(mapView.zoomLevel > 19.0 && hideChildAnnotations) {
+        //       let annotations = mapView.annotations
+        //       annotations.forEach { annotation in
+        //           if #available(iOS 11.0, *) {
+        //               if((annotation as? FlutterAnnotation)?.isChildAnnotation ?? false) {
+        //                   mapView.view(for: annotation)?.isHidden = false
+        //               } else {
+        //                   mapView.view(for: annotation)?.isHidden = true
+        //               }
+        //           } else {
+        //               // Fallback on earlier versions
+        //           }
+        //       }
+        //       hideChildAnnotations = false;
+        //   } else if (mapView.zoomLevel <= 19.0 && !hideChildAnnotations) {
+        //       let annotations = mapView.annotations
+        //       annotations.forEach { annotation in
+        //           if #available(iOS 11.0, *) {
+        //               if((annotation as? FlutterAnnotation)?.isChildAnnotation ?? false) {
+        //                   mapView.view(for: annotation)?.isHidden = true
+        //               } else {
+        //                   mapView.view(for: annotation)?.isHidden = false
+        //               }
+        //           } else {
+        //               // Fallback on earlier versions
+        //           }
+        //       }
+        //       hideChildAnnotations = true;
+        //   }
+        //
     }
     
     // onIdle
@@ -454,22 +454,72 @@ extension AppleMapController: MKMapViewDelegate {
 
 extension AppleMapController {
     private func takeSnapshot(onCompletion: @escaping (FlutterStandardTypedData?, Error?) -> Void) {
-        // MKMapSnapShotOptions setting.
         snapShotOptions.region = self.mapView.region
-        snapShotOptions.size = self.mapView.frame.size
+        snapShotOptions.mapType = self.mapView.mapType
+        snapShotOptions.pointOfInterestFilter = self.mapView.pointOfInterestFilter
+        snapShotOptions.size = CGSize(width: UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width - 16 : UIScreen.main.bounds.height - 16, height: UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width - 16 : UIScreen.main.bounds.height - 16)
         snapShotOptions.scale = UIScreen.main.scale
         
-        // Set MKMapSnapShotOptions to MKMapSnapShotter.
-        snapShot = MKMapSnapshotter(options: snapShotOptions)
-        
-        snapShot?.cancel()
-        
-        snapShot?.start(completionHandler: {(snapshot: MKMapSnapshotter.Snapshot?, error: Error?) -> Void in
-            if let imageData = snapshot?.image.pngData() {
+        let snapshotter = MKMapSnapshotter(options: snapShotOptions)
+        snapshotter.start { [weak self] (snapshot: MKMapSnapshot?, error: Error?) -> Void in
+            guard error == nil, let snapshot = snapshot else { return }
+            
+            UIGraphicsBeginImageContextWithOptions(snapshot.image.size, true, snapshot.image.scale)
+            snapshot.image.draw(at: CGPoint.zero)
+            
+            let titleAttributes = self?.titleAttributes()
+            for annotation in (self?.mapView.annotations)! {
+                let point: CGPoint = snapshot.point(for: annotation.coordinate)
+                if let customPin = customPin {
+                    self?.drawPin(point: point, annotation: annotation)
+                }
+                if let title = annotation.title as? String {
+                    self?.drawTitle(title: title,
+                                    at: point,
+                                    attributes: titleAttributes!)
+                }
+            }
+            let compositeImage = UIGraphicsGetImageFromCurrentImageContext()
+            if let imageData = compositeImage {
                 onCompletion(FlutterStandardTypedData.init(bytes: imageData), nil)
             } else {
                 onCompletion(nil, error)
             }
-        })
+        }
+    }
+    
+    private func drawTitle(title: String,
+                           at point: CGPoint,
+                           attributes: [NSAttributedStringKey: NSObject]) {
+        let titleSize = title.size(withAttributes: attributes)
+        title.draw(with: CGRect(
+                    x: point.x - titleSize.width / 2.0,
+                    y: point.y + 1,
+                    width: titleSize.width,
+                    height: titleSize.height),
+                   options: .usesLineFragmentOrigin,
+                   attributes: attributes,
+                   context: nil)
+    }
+    
+    private func titleAttributes() -> [NSAttributedStringKey: NSObject] {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        let titleFont = UIFont.systemFont(ofSize: 10, weight: UIFont.Weight.semibold)
+        let attrs = [NSAttributedStringKey.font: titleFont,
+                     NSAttributedStringKey.paragraphStyle: paragraphStyle]
+        return attrs
+    }
+    
+    private func drawPin(point: CGPoint, annotation: MKAnnotation) {
+        let annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: "test")
+        annotationView.contentMode = .scaleAspectFit
+        annotationView.bounds = CGRect(x: 0, y: 0, width: 40, height: 40)
+        annotationView.drawHierarchy(in: CGRect(
+            x: point.x - annotationView.bounds.size.width / 2.0,
+            y: point.y - annotationView.bounds.size.height,
+            width: annotationView.bounds.width,
+            height: annotationView.bounds.height),
+                                     afterScreenUpdates: true)
     }
 }
