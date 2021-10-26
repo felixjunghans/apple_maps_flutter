@@ -481,7 +481,7 @@ extension AppleMapController {
             }
             let compositeImage = UIGraphicsGetImageFromCurrentImageContext()
             if let imageData = compositeImage {
-                onCompletion(FlutterStandardTypedData.init(bytes: imageData.pngData()), nil)
+                onCompletion(FlutterStandardTypedData.init(bytes: imageData.pngData()!), nil)
             } else {
                 onCompletion(nil, error)
             }
