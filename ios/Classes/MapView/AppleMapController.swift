@@ -473,7 +473,7 @@ extension AppleMapController {
             let titleAttributes = self?.titleAttributes()
             for annotation in (self?.mapView.annotations)! {
                 let point: CGPoint = snapshot.point(for: annotation.coordinate)
-                self?.drawPin(point: point, annotation: annotation)
+                self?.drawPin(point: point, annotation: annotation as! FlutterAnnotation)
                 if let title = annotation.title as? String {
                     self?.drawTitle(title: title,
                                     at: point,
@@ -508,11 +508,11 @@ extension AppleMapController {
         paragraphStyle.alignment = .center
         let titleFont = UIFont.systemFont(ofSize: 10, weight: UIFont.Weight.semibold)
         let attrs = [NSAttributedString.Key.font: titleFont,
-                     NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.backgroundColor: UIColor.white]
+                     NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: UIColor.white]
         return attrs
     }
     
-    private func drawPin(point: CGPoint, annotation: MKAnnotation) {
+    private func drawPin(point: CGPoint, annotation: FlutterAnnotation) {
         if #available(iOS 11.0, *) {
             let annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: "test")
             annotationView.contentMode = .scaleAspectFit
@@ -523,7 +523,6 @@ extension AppleMapController {
                 width: annotationView.bounds.width,
                 height: annotationView.bounds.height),
                                          afterScreenUpdates: true)
-            guard let mapItem = annotation as? FlutterAnnotation else { return }
             annotationView.glyphImage = mapItem.image
             if(mapItem.backgroundColor != nil) {
                 annotationView.markerTintColor = colorWithHexString(hexString: mapItem.backgroundColor!)
