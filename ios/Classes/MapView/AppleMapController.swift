@@ -456,6 +456,7 @@ extension AppleMapController {
     private func takeSnapshot(onCompletion: @escaping (FlutterStandardTypedData?, Error?) -> Void) {
         snapShotOptions.region = self.mapView.region
         snapShotOptions.mapType = self.mapView.mapType
+        snapShotOptions.camera = self.mapView.camera
         if #available(iOS 13.0, *) {
             snapShotOptions.pointOfInterestFilter = self.mapView.pointOfInterestFilter
         }
