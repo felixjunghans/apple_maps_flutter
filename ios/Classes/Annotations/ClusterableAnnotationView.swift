@@ -26,6 +26,19 @@ class ClusterableAnnotationView: MKMarkerAnnotationView {
                 markerTintColor = colorWithHexString(hexString: mapItem.backgroundColor!)
             }
             clusteringIdentifier = mapItem.clusteringIdentifier
+            if(mapItem.controlActions > 0) {
+                let label = UILabel(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+                label.textColor = .white
+                label.textAlignment = .center
+                label.text = mapItem.controlActions.description
+                label.font = label.font.withSize(14)
+                let circle = SimpleCircle()
+                circle.backgroundColor = UIColor.clear
+                circle.frame = CGRect(x: 15, y: -12, width: 20, height: 20)
+                circle.layer.zPosition = 999999
+                circle.addSubview(label)
+                addSubview(circle)
+            }
         }
     }
     
@@ -114,4 +127,18 @@ func colorComponentFrom(colorString: String, start: Int, length: Int) -> CGFloat
     let hexFloat: CGFloat = CGFloat(hexComponent)
     let floatValue: CGFloat = CGFloat(hexFloat / 255.0)
     return floatValue
+}
+
+@IBDesignable
+class SimpleCircle: UIView {
+    override func draw(_ rect: CGRect) {
+        var path = UIBezierPath()
+        path = UIBezierPath(ovalIn: CGRect(x: 0, y: 0, width: 20, height: 20))
+        if #available(iOS 13.0, *) {
+            UIColor.systemRed.setFill()
+        } else {
+            UIColor.red.setFill()
+        }
+        path.fill()
+    }
 }

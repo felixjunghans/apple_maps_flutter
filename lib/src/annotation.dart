@@ -157,6 +157,7 @@ class Annotation {
     this.position = const LatLng(0.0, 0.0),
     this.onTap,
     this.visible = true,
+    this.controlActions = 0,
     this.onDragEnd,
   }) : assert(0.0 <= alpha && alpha <= 1.0);
 
@@ -176,6 +177,8 @@ class Annotation {
 
   /// Backgroundcolor of the marker
   final String? backgroundColor;
+
+  final int controlActions;
 
   /// The icon image point that will be placed at the [position] of the marker.
   ///
@@ -220,6 +223,7 @@ class Annotation {
     LatLng? positionParam,
     bool? visibleParam,
     VoidCallback? onTapParam,
+    int? controlActions,
     ValueChanged<LatLng>? onDragEndParam,
   }) {
     return Annotation(
@@ -232,6 +236,7 @@ class Annotation {
       position: positionParam ?? position,
       onTap: onTapParam ?? onTap,
       visible: visibleParam ?? visible,
+      controlActions: controlActions ?? this.controlActions,
       onDragEnd: onDragEndParam ?? onDragEnd,
     );
   }
@@ -253,6 +258,7 @@ class Annotation {
     addIfPresent('icon', icon._toJson());
     addIfPresent('infoWindow', infoWindow._toJson());
     addIfPresent('visible', visible);
+    addIfPresent('controlActions', controlActions);
     addIfPresent('image', image?._toJson());
     addIfPresent('position', position._toJson());
     addIfPresent('isChildAnnotation', isChildAnnotation);
